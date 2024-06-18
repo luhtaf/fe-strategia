@@ -135,7 +135,7 @@ onBeforeUnmount(() => {
                 <h4>Chip</h4>
                 <h5>Basic</h5>
                 <div class="flex align-items-center flex-column sm:flex-row">
-                    <Chip label="Action" class="mr-2 mb-2"></Chip>
+                    <Chip label="Action" class="mr-2 mb-2">Miftakhul Indi Masud<Button icon="pi pi-times" severity="secondary" raised rounded size='small'></Button></Chip>
                     <Chip label="Comedy" class="mr-2 mb-2"></Chip>
                     <Chip label="Mystery" class="mr-2 mb-2"></Chip>
                     <Chip label="Thriller" :removable="true" class="mb-2"></Chip>

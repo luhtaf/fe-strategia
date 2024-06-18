@@ -9,6 +9,16 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
+                    path: '/main-menu',
+                    name: 'main-menu',
+                    component: () => import('@/views/stravel/Index.vue')
+                },
+                {
+                    path: '/kegiatan-baru',
+                    name: 'kegiatan-baru',
+                    component: () => import('@/views/stravel/Kegiatan-Baru.vue')
+                },
+                {
                     path: '/',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
