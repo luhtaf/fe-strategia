@@ -7,12 +7,12 @@ const model = ref([
     {
         label: 'Instraction',
         items: [
-            { label: 'Main Menu', icon: 'pi pi-fw pi-eye', to: '/main-menu' }
+            { label: 'Main Menu', icon: 'pi pi-fw pi-eye', to: '/' }
         ]
     },
     {
         label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
+        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/dashboard' }]
     },
     {
         label: 'UI Components',

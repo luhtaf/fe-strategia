@@ -9,17 +9,22 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
-                    path: '/main-menu',
+                    path: '/',
                     name: 'main-menu',
                     component: () => import('@/views/stravel/Index.vue')
                 },
                 {
-                    path: '/kegiatan-baru',
-                    name: 'kegiatan-baru',
-                    component: () => import('@/views/stravel/Kegiatan-Baru.vue')
+                    path: '/arahan-pimpinan',
+                    name: 'arahan-pimpinan',
+                    component: () => import('@/views/stravel/Arahan-Pimpinan/Arahan-Pimpinan.vue')
                 },
                 {
-                    path: '/',
+                    path: '/performa-tim',
+                    name: 'performa-tim',
+                    component: () => import('@/views/stravel/Performa-Tim/Performa-Tim.vue')
+                },
+                {
+                    path: '/dashboard',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
                 },

@@ -4,7 +4,7 @@ import { URL_RAPAT } from './url'
 import axios from './axios_intercept'
 import { useToast } from 'primevue/usetoast';
 
-// const listRapat = ref(null);
+const paginator=ref(null)
 const dataRapat=ref({
     data:null,
     links:null,
@@ -12,10 +12,11 @@ const dataRapat=ref({
 })
 
 const toast = useToast();
-const initDataRapat=()=>{
+const initDataRapat=(size=10,page=1)=>{
     loading.value=true
+    const url=`${URL_RAPAT}?size=${size}&page=${page}`
     axios({
-    url:URL_RAPAT,
+        url,
         method:'get'
     })
     .then((response)=>{
@@ -65,25 +66,23 @@ const formatDate = (value) => {
             }
             var tanggal=JSON.parse(value)
             var date = new Date(tanggal[0]);
-            var day = String(date.getUTCDate()).padStart(2, '0');
-            var month = String(date.getUTCMonth() + 1).padStart(2, '0');
-            var year = String(date.getUTCFullYear()).slice(-2); // Get last two digits
-            var hours = String(date.getUTCHours()).padStart(2, '0');
-            var minutes = String(date.getUTCMinutes()).padStart(2, '0');
-            var seconds = String(date.getUTCSeconds()).padStart(2, '0');
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                timeZone: 'Asia/Jakarta',
+                hour12: false,
+            };
 
-            const tanggalMulai = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+            var formattedDate = date.toLocaleDateString('id-ID', options);
 
+            const tanggalMulai= formattedDate.replace(/(\d+:\d+)/, '$1 WIB');
 
-            date = new Date(tanggal[1]);
-            day = String(date.getUTCDate()).padStart(2, '0');
-            month = String(date.getUTCMonth() + 1).padStart(2, '0');
-            year = String(date.getUTCFullYear()).slice(-2); // Get last two digits
-            hours = String(date.getUTCHours()).padStart(2, '0');
-            minutes = String(date.getUTCMinutes()).padStart(2, '0');
-            seconds = String(date.getUTCSeconds()).padStart(2, '0');
+            var formattedDate = date.toLocaleDateString('id-ID', options);
 
-            const tanggalSelesai = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+            const tanggalSelesai= formattedDate.replace(/(\d+:\d+)/, '$1 WIB');
 
             return `${tanggalMulai} s.d. ${tanggalSelesai}`   
             
@@ -98,6 +97,9 @@ const formatDate = (value) => {
     }
 };
 
+const updatePage = (event) => {
+    initDataRapat(event.rows,event.page+1)
+};
 
 </script>
 
@@ -169,11 +171,18 @@ const formatDate = (value) => {
                             <Button severity="danger" rounded icon="pi pi-trash"></Button>
                         </template>
                     </Column>
-                <!-- </template> -->
-                    
-                    
-                    
                 </DataTable>
+                <Paginator
+                    v-if="!loading"
+                    class="my-2"
+                    :rows="dataRapat?.meta?.per_page"
+                    :totalRecords="dataRapat?.meta?.total"
+                    :rowsPerPageOptions="[5, 10, 25, 50, 100]"
+                    v-model:first="paginator"
+                    :currentPageReportTemplate="`Menampilkan ${ paginator+1 } - ${ paginator+dataRapat?.meta?.per_page } dari ${dataRapat.meta.total} data`"
+                    template="PrevPageLink PageLinks NextPageLink RowsPerPageDropdown CurrentPageReport"
+                    @page="updatePage($event)"
+                />
             </div>
         </div>
 </template>

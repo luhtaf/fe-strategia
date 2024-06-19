@@ -1,9 +1,12 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import axios from '../axios_intercept'
-import { URL_RAPAT, URL_RAPAT_BY_ID } from '../url';
+import { URL_RAPAT, URL_RAPAT_BY_ID, URL_TEMA } from '../url';
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
+const loading=ref({
+    loadSuggest:false
+})
 const dropdownMetodeValues = ref([
         { name: 'Luring' },
         { name: 'Daring' },
@@ -56,6 +59,7 @@ const props = defineProps({
 const emit=defineEmits([
     'closeModal'
 ])
+
 onBeforeMount(() => {
     initSuggestTema()
     if (props.currentData) {
@@ -100,6 +104,7 @@ const simpanRapat=()=>{
     currentData.value.urgensi=dropdownSifatValue.value.name
     currentData.value.penyelenggara=dropdownPenyelenggaraValue.value.name
     currentData.value.pimpinan=dropdownPimpinanRapatValue.value.name
+    currentData.value.metode=dropdownMetodeValue.value.name
     currentData.value.tanggal=JSON.stringify(date.value)
     if (typeof(currentData.value.tema)==='object') currentData.value.tema=currentData.value.tema.nama
     var url=URL_RAPAT
@@ -108,12 +113,11 @@ const simpanRapat=()=>{
         url=URL_RAPAT_BY_ID(currentData.value.id)
     }
     axios({
-        url:url,
+        url,
         method:'post',
         data:currentData.value
     })
     .then((response)=>{
-        console.log(response)
         toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Sukses menyimpan data rapat', life: 3000 });
         if (!currentData.value.id) {
             emit('closeModal',true)
@@ -121,6 +125,7 @@ const simpanRapat=()=>{
         
     })
     .catch((error)=>{
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'gagal menyimpan data rapat', life: 3000 });
         console.log(error)
     })
 }
@@ -131,7 +136,7 @@ const search = (event) => {
             filteredTema.value = [...tema.value];
         } else {
             filteredTema.value = tema.value.filter((item) => {
-                return item.nama.toLowerCase().startsWith(event.query.toLowerCase());
+                return item.toLowerCase().startsWith(event.query.toLowerCase());
             });
         }
     }, 250);
@@ -139,17 +144,23 @@ const search = (event) => {
 const tema = ref();
 const filteredTema = ref();
 const initSuggestTema=()=>{
-    tema.value=[
-    {
-        nama:"Judi Online"
-    },
-    {
-        nama:"SPBE"
-    },
-    {
-        nama:"Anggaran"
-    }
-]
+    loading.value.loadSuggest=true
+    const url=URL_TEMA
+    axios({
+        url,
+        method:'get',
+    })
+    .then((response)=>{
+        console.log(response)
+        tema.value=response.data.tema
+    })
+    .catch((error)=>{
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'gagal load tema rapat', life: 3000 });
+        console.log(error)
+    })
+    .finally(()=>{
+        loading.value.loadSuggest=false
+    })
 }
 
 const autoCompleteRef=ref(null)
@@ -200,18 +211,23 @@ const handleBlur = () => {
                     <div class="col-12">
                         <IconField>
                             <AutoComplete 
+                                v-if="!loading.loadSuggest"
                                 v-model="currentData.tema" 
-                                optionLabel="nama" 
                                 placeholder="Tema" 
                                 :suggestions="filteredTema" 
                                 @complete="search" 
                                 @blur="handleBlur"
                                 ref="autoCompleteRef" 
-                                    >
+                            >
                                 <template #empty>
                                     <p @click="handleBlur" style="cursor: pointer;">No suggestion found, use <b>{{ currentData.tema }}</b> instead</p>
                                 </template>
                             </AutoComplete>
+                            <InputText
+                                v-else
+                                v-model="currentData.tema" 
+                                placeholder="Tema" 
+                            />
                         </IconField>
                     </div>
                 </div>
@@ -228,7 +244,7 @@ const handleBlur = () => {
                     <div class="col-12">
                         <IconField>
                             <!-- <Calendar id="calendar-timeonly" v-model="time" timeOnly selectionMode="range" placeholder="Waktu" /> -->
-                            <Calendar v-model="date" placeholder="Tanggal dan Waktu Rapat" selectionMode="range" :manualInput="true" showTime hourFormat="24" />
+                            <Calendar :showIcon="true" v-model="date" placeholder="Tanggal dan Waktu Rapat" selectionMode="range" :manualInput="true" showTime hourFormat="24" />
 
                         </IconField>
                     </div>

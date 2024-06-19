@@ -225,10 +225,8 @@ const kosongkanArahan=()=>{
             </div>
             <div class="col-12 lg:col-5">
                 <div class="grid formgrid">
-                    
                     <div class="col-12">
                         <IconField>
-                            
                             <InputText @change="arahanTerupdate(arahan)" v-model="arahan.arahan" type="text" placeholder="Arahan" />
                         </IconField>
                     </div>

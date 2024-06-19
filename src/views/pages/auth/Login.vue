@@ -12,7 +12,6 @@ const logoUrl = computed(() => {
     return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
 });
 const login=()=>{
-    console.log("asd")
     router.push('/main-menu')
 }
 </script>
