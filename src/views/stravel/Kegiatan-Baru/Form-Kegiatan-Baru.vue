@@ -10,6 +10,7 @@ const loading=ref({
 const dropdownMetodeValues = ref([
         { name: 'Luring' },
         { name: 'Daring' },
+        { name: 'Hybrid' }
 ]);
 const dropdownMetodeValue = ref()
 
@@ -69,16 +70,16 @@ onBeforeMount(() => {
         dropdownPenyelenggaraValue.value=matchDropDown(dropdownPenyelenggaraValues,currentData.value.penyelenggara)
         dropdownPimpinanRapatValue.value=matchDropDown(dropdownPimpinanRapatValues,currentData.value.pimpinan)
         dropdownMetodeValue.value=matchDropDown(dropdownMetodeValues,currentData.value.metode)
-        var tanggal
-        if(!currentData.value.tanggal && currentData.value.tanggal!=='null') {
-            tanggal=JSON.parse(currentData.value.tanggal)
-            date.value=[new Date(tanggal[0]),new Date(tanggal[1])]
+        if(props.currentData.tanggal_mulai && props.currentData.tanggal_selesai) {
+            const {tanggal_mulai,tanggal_selesai}=props.currentData
+            date.value=[new Date(tanggal_mulai),new Date(tanggal_selesai)]
         }
     }
     else{
         currentData.value={
             nama:null,
-            tanggal:null,
+            tanggal_mulai:null,
+            tanggal_selesai:null,
             lokasi:null,
             metode:null,
             jenis:null,
@@ -89,6 +90,7 @@ onBeforeMount(() => {
             urgensi:null,
             penyelenggara:null,
             pimpinan:null,
+            link_rsvp:null
         }
     }
 });
@@ -105,7 +107,8 @@ const simpanRapat=()=>{
     currentData.value.penyelenggara=dropdownPenyelenggaraValue.value.name
     currentData.value.pimpinan=dropdownPimpinanRapatValue.value.name
     currentData.value.metode=dropdownMetodeValue.value.name
-    currentData.value.tanggal=JSON.stringify(date.value)
+    currentData.value.tanggal_mulai=date.value[0]
+    currentData.value.tanggal_selesai=date.value[1]
     if (typeof(currentData.value.tema)==='object') currentData.value.tema=currentData.value.tema.nama
     var url=URL_RAPAT
     if (currentData.value.id) {
@@ -151,7 +154,6 @@ const initSuggestTema=()=>{
         method:'get',
     })
     .then((response)=>{
-        console.log(response)
         tema.value=response.data.tema
     })
     .catch((error)=>{
@@ -232,25 +234,22 @@ const handleBlur = () => {
                     </div>
                 </div>
             </div>
+            <div class="col-12">
+                <h5>Tanggal dan Waktu</h5>
+                <div class="grid formgrid">
+                    <div class="col-12">
+                        <IconField>
+                            <Calendar :showIcon="true" v-model="date" placeholder="Tanggal dan Waktu Rapat" selectionMode="range" :manualInput="true" showTime hourFormat="24" />
+                        </IconField>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="card col-12 md:col-6 lg:col-4">
         <h4/>
         <div class="grid p-fluid">
-            <div class="col-12">
-                <h5>Tanggal dan Waktu</h5>
-                <div class="grid formgrid">
-                    <div class="col-12">
-                        <IconField>
-                            <!-- <Calendar id="calendar-timeonly" v-model="time" timeOnly selectionMode="range" placeholder="Waktu" /> -->
-                            <Calendar :showIcon="true" v-model="date" placeholder="Tanggal dan Waktu Rapat" selectionMode="range" :manualInput="true" showTime hourFormat="24" />
-
-                        </IconField>
-                    </div>
-                </div>
-            </div>
-
             <div class="col-12">
                 <h5>Lokasi</h5>
                 <div class="grid formgrid">
@@ -284,6 +283,17 @@ const handleBlur = () => {
                     </div>
                 </div>
             </div>
+
+            <div class="col-12">
+                <h5>Link RSVP</h5>
+                <div class="grid formgrid">
+                    <div class="col-12">
+                        <IconField>
+                            <InputText v-model="currentData.link_rsvp" type="text" placeholder="Link RSVP" />
+                        </IconField>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -312,8 +322,6 @@ const handleBlur = () => {
                     </div>
                 </div>
             </div>
-
-
 
             <div class="col-12">
                 <h5>Pemapar</h5>

@@ -1,30 +1,32 @@
 <script setup>
 import axios from '../axios_intercept'
 import { ref, onBeforeMount } from 'vue';
-import { URL_ALL_ARAHAN, URL_ARAHAN_BY_ID, URL_GET_ALL_KARYAWAN } from '../url'
+import { URL_ARAHAN, URL_ARAHAN_BY_ID, URL_GET_ALL_KARYAWAN } from '../url'
 import { useToast } from 'primevue/usetoast';
-import { parsingDateToURL } from '../library'
 const toast = useToast();
 const dataArahan=ref(null)
 const loading=ref({
     loadArahan:false
 })
+
+const props = defineProps({
+    currentData:Object
+})
+
 onBeforeMount(()=>{
     initDataArahan()
     initDataKaryawan()
 })
 const paginator=ref(null)
-const breadcrumbHome = ref({ icon: 'pi pi-home', route: '/' });
-const breadcrumbItems = ref([{ label: 'Daftar Arahan' }]);
 const initDataArahan=(size=10,page=1)=>{
     loading.value.loadArahan=true
-
-    var url=`${URL_ALL_ARAHAN}?size=${size}&page=${page}`
+    const {id}=props.currentData
+    var url=`${URL_ARAHAN(id)}?size=${size}&page=${page}`
     if (search.value.isSearch) {
         url=search.value.nama?`${url}&nama_rapat=${search.value.nama}`:url
         url=search.value.arahan?`${url}&arahan=${search.value.arahan}`:url
         url=search.value.pelaksana?`${url}&pelaksana=${search.value.pelaksana.nama}`:url
-        url=search.value.deadline?`${url}&deadline=${parsingDateToURL(search.value.deadline)}`:url
+        url=search.value.deadline?`${url}&deadline=${search.value.deadline.toISOString().replace('.000', '.000') + 'Z'}`:url
         url=search.value.status?`${url}&status=${search.value.status}`:url
         url=search.value.penyelesaian?`${url}&penyelesaian=${search.value.penyelesaian}`:url
         url=search.value.data_dukung?`${url}&data_dukung=${search.value.data_dukung}`:url
@@ -140,7 +142,6 @@ const initPelaksana=()=>{
     });
 }
 const arahanTerupdate=arahan=>{
-    console.log(arahan)
     arahan.terupdate=true
 }
 
@@ -226,26 +227,14 @@ const clearFilter=()=>{
         <div class="card card-w-title overflow-auto">
             <div class="card-title mb-3">
                 <h5>Daftar Arahan</h5>
-                <Breadcrumb :home="breadcrumbHome" :model="breadcrumbItems" >
-                    <template #item="{ item, props }">
-                        <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-                            <a :href="href" v-bind="props.action" @click="navigate">
-                                <span :class="[item.icon, 'text-color']" />
-                                <span class="text-primary font-semibold">{{ item.label }}</span>
-                            </a>
-                        </router-link>
-                        <a v-else :href="item.url" :target="item.target" v-bind="props.action">
-                            <span class="text-surface-700 dark:text-surface-0">{{ item.label }}</span>
-                        </a>
-                    </template>
-                </Breadcrumb>
+
             </div>
             <DataTable
                 :value="dataArahan?.data"
                 :rows="dataArahan?.per_page"
                 :rowHover="true"
                 :loading="loading.loadArahan"
-                showGridlines
+                showGridlines 
             >
                 <template #header>
                     <div class="flex justify-content-between flex-column sm:flex-row">
@@ -310,13 +299,7 @@ const clearFilter=()=>{
                                 <InputText @change="arahanTerupdate(data)" v-model="data.arahan" placeholder="Arahan"/>
                             </template>
                             <template v-else>
-                                <p :class="{
-                                    'bg-red-100':data.status=='Gagal',
-                                    'bg-green-100':data.status=='Selesai',
-                                    'bg-orange-100':data.status=='Dalam Proses',
-                                    'bg-black-100':data.status=='Tidak ada Tindak Lanjut',
-                                    'bg-gray-100':data.status==null
-                                    }">{{ data.arahan }}</p>
+                                {{ data.arahan }}
                             </template>
                         </template>
                     </template>

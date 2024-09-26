@@ -3,7 +3,9 @@ import { ref, onBeforeMount } from 'vue';
 import { useConfirm } from 'primevue/useconfirm';
 import axios from '../axios_intercept'
 import { URL_GET_ALL_KARYAWAN, URL_UNDANGAN, URL_UNDANGAN_BY_ID } from '../url'
+import { useClipboard } from '@vueuse/core';
 import { useToast } from 'primevue/usetoast';
+import {undangan} from './undangan_template'
 const toast = useToast();
 const props=defineProps({
     currentData:Object
@@ -41,7 +43,7 @@ const removeUndangan=async (data,all=false)=>{
     })
 }
 
-const initDataKaryawanFromDB=()=>{
+const initDataKaryawanFromDB=async ()=>{
     loading.value.loadKaryawan=true
     axios({
             url: URL_GET_ALL_KARYAWAN,
@@ -59,7 +61,7 @@ const initDataKaryawanFromDB=()=>{
 }
 
 
-const initDataUndangan=()=>{
+const initDataUndangan=async ()=>{
     loading.value.loadUndangan=true
     axios({
         url: URL_UNDANGAN(props.currentData.id),
@@ -67,6 +69,10 @@ const initDataUndangan=()=>{
     })
     .then((response) => {
         listUndangan.value = response.data.data
+        source.value=undangan(
+            props.currentData,
+            listUndangan.value
+        )
         initDataKaryawanExisting()
     })
     .catch((error) => {
@@ -81,9 +87,10 @@ const initDataKaryawanExisting=async ()=>{
     listKaryawan.value = listKaryawan.value.filter(karyawan => !listUndangan.value.some(undangan => undangan.nama === karyawan.nama));
 }
 
-onBeforeMount(()=>{
-    initDataUndangan()
-    initDataKaryawanFromDB()    
+onBeforeMount(async ()=>{
+    await initDataUndangan()
+    await initDataKaryawanFromDB()
+    
 })
 
 const tambahKaryawanKeUndangan = async (jenis) => {
@@ -176,6 +183,10 @@ const simpanUndangan=async (undangan,jenis)=>{
     })
 }
 
+
+
+const source = ref();
+const { copy, copied } = useClipboard({ source });
 
 </script>
 <template>
@@ -286,8 +297,7 @@ const simpanUndangan=async (undangan,jenis)=>{
     <div class="col-12 mt-6">
         <ConfirmPopup></ConfirmPopup>
         <Button ref="popup" @click="confirmKosongkanUndangan($event)" :disabled="listUndangan.length==0" label="Kosongkan Undangan" size="large" severity="danger" outlined class="mb-2 mr-2" />
-        <!-- <Button v-if="!loading.simpanUndangan" @click="simpanUndangan" :disabled="listUndangan.length==0" label="Simpan Undangan" size="large" severity="success" class="mb-2 mr-2" />
-        <Button v-else disabled icon="pi pi-spin pi-spinner" size="large" label="Menyimpan Undangan" severity="success" class="mb-2 mr-2"/> -->
+        <Button size="large" class="mb-2 mr-2" @click="copy(source)" label="Salin Format Undangan"/>
     </div>
 
 

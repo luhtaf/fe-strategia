@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import ModalKegiatanBaru from './Kegiatan-Baru/Modal-Kegiatan-Baru.vue'
+import ModalViewKegiatan from './View-Kegiatan/Modal-View-Kegiatan.vue'
 import TabelRapat from './Tabel-Rapat.vue';
 import { useRouter } from 'vue-router';
 import { URL_COUNT_ARAHAN_BELUM_TL } from './url';
@@ -24,11 +25,17 @@ const initJumlahArahanBelumTL=()=>{
 const jumlahArahanBelumTL=ref(0)
 const router = useRouter()
 
+const modalViewKegiatan=ref(false)
 const createRapatModal = ref(false)
 const currentData=ref(null)
+const currentDataView=ref(null)
 const tekan=(data)=>{
     createRapatModal.value=true
     currentData.value=data?data:null
+}
+const viewRapat=(data)=>{
+    modalViewKegiatan.value=true
+    currentDataView.value=data?data:null
 }
 const renewData=ref(false)
 const dataRapat=ref({
@@ -97,6 +104,7 @@ onBeforeMount(()=>{
     
     <TabelRapat
         :renewData="renewData"
+        @viewModal="(currentData)=>viewRapat(currentData)"
         @editModal="(currentData)=>tekan(currentData)"
         @successRenewData="(data)=>{
             renewData=false
@@ -109,6 +117,17 @@ onBeforeMount(()=>{
         @closeModal="(closeModal)=>{
             createRapatModal=closeModal
             renewData=true
+            initJumlahArahanBelumTL()
             }"
     />
+
+    <ModalViewKegiatan
+        :propsVisible="modalViewKegiatan"
+        :currentData='currentDataView'
+        @closeModal="(closeModal)=>{
+            modalViewKegiatan=closeModal
+            renewData=true
+            }"
+    />
+
 </template>

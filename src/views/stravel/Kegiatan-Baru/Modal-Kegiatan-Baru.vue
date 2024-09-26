@@ -5,6 +5,7 @@ import FormUndanganKegiatanBaru from './Form-Undangan-Kegiatan-Baru.vue'
 import FormKehadiranPesertaKegiatan from './Form-Kehadiran-Peserta-Kegiatan.vue'
 import FormKelengkapanRapat from './Form-Kelengkapan-Rapat.vue';
 import FormArahanPimpinan from './Form-Arahan-Pimpinan.vue';
+import TindakLanjutArahanPimpinan from './Tindak-Lanjut-Arahan-Pimpinan.vue';
 const visible=ref(false);
 
 const nowTampil=ref(null)
@@ -65,6 +66,13 @@ const nestedMenuitems = ref([
         command: ()=>{
             nowTampil.value='arahan'
         }
+    },
+    {
+        label: 'Tindak Lanjut Arahan',
+        icon: 'pi pi-fw pi-check-circle',
+        command: ()=>{
+            nowTampil.value='tindak_lanjut'
+        }
     }
 ]);
 const nestedKosong=ref([
@@ -78,9 +86,13 @@ const nestedKosong=ref([
 ])
 </script>
 <template>
-    <Dialog v-model:visible="visible" class="z-5" maximizable modal :style="{ width: '85rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-        
-        <div class="grid card">
+    <Dialog header="Detail Rapat" v-model:visible="visible" class="z-5" maximizable modal :style="{ width: '85rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <template #header>
+            <h2>
+                Kegiatan Baru {{ currentData?.nama }}
+            </h2>
+        </template>
+        <div class="grid mt-2 card">
             <div class="card-header col-12">
                 <TabMenu v-if="currentData?.id" :model="nestedMenuitems" />
                 <TabMenu v-else :model="nestedKosong" />
@@ -106,6 +118,10 @@ const nestedKosong=ref([
             />
             <FormArahanPimpinan
                 v-else-if="nowTampil=='arahan'"
+                :currentData="currentData"
+            />
+            <TindakLanjutArahanPimpinan
+                v-else-if="nowTampil=='tindak_lanjut'"
                 :currentData="currentData"
             />
         </div>
