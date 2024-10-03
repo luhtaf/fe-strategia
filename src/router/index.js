@@ -11,18 +11,23 @@ const router = createRouter({
                 {
                     path: '/',
                     name: 'main-menu',
-                    component: () => import('@/views/stravel/Index.vue')
+                    component: () => import('@/views/stravel/Index.vue'),
+                    meta: { requiresAuth: true }
                 },
                 {
                     path: '/arahan-pimpinan',
                     name: 'arahan-pimpinan',
-                    component: () => import('@/views/stravel/Arahan-Pimpinan/Arahan-Pimpinan.vue')
+                    component: () => import('@/views/stravel/Arahan-Pimpinan/Arahan-Pimpinan.vue'),
+                    meta: { requiresAuth: true }
                 },
                 {
                     path: '/performa-tim',
                     name: 'performa-tim',
-                    component: () => import('@/views/stravel/Performa-Tim/Performa-Tim.vue')
+                    component: () => import('@/views/stravel/Performa-Tim/Performa-Tim.vue'),
+                    meta: { requiresAuth: true }
                 },
+
+
                 {
                     path: '/dashboard',
                     name: 'dashboard',
@@ -185,6 +190,47 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Error.vue')
         }
     ]
+});
+
+const RBAC=(user,requiredRoles) => {
+    return requiredRoles.includes(user);
+}
+
+const logout = () => {
+    sessionStorage.clear();
+    localStorage.clear();
+    return '/auth/login'
+  }
+
+router.beforeEach((to, from, next) => {
+    localStorage.setItem('prevPath', from.path)
+    localStorage.setItem('curPath', to.path)
+    const isAuthenticated = localStorage.getItem('accessToken') ? true : false;
+    console.log(isAuthenticated)
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (isAuthenticated) {            
+            const activeRole = localStorage.getItem('activeRole')
+            if (to.meta.requiresRBAC) {
+                const requiredRoles = to.meta.Roles
+                if(requiredRoles) {
+                    const isAuthorization = RBAC(activeRole, requiredRoles)
+                    isAuthorization ? next() : next('/')
+                } else{
+                    next()
+                }
+            }
+            else {
+                next()
+            }
+        }
+        else {
+            next(logout())
+        }        
+    }
+    else {
+        const prevPath = localStorage.getItem('prevPath').split('&')[0]
+        isAuthenticated ? next(prevPath) : next()
+    }
 });
 
 export default router;

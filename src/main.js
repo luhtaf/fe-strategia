@@ -108,6 +108,9 @@ import VirtualScroller from 'primevue/virtualscroller';
 
 import BlockViewer from '@/components/BlockViewer.vue';
 
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+
 import '@/assets/styles.scss';
 
 const app = createApp(App);
@@ -117,6 +120,7 @@ app.use(PrimeVue, { ripple: true });
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
+app.use(VueSweetalert2);
 
 app.directive('tooltip', Tooltip);
 app.directive('badge', BadgeDirective);
