@@ -12,7 +12,13 @@ const router = createRouter({
                     path: '/',
                     name: 'main-menu',
                     component: () => import('@/views/stravel/Index.vue'),
-                    meta: { requiresAuth: true }
+                    meta: { 
+                        requiresAuth: true,
+                        requiresRBAC: true,
+                        Roles:
+                            ['admin']
+                     }
+                    
                 },
                 {
                     path: '/arahan-pimpinan',
@@ -214,7 +220,7 @@ router.beforeEach((to, from, next) => {
                 const requiredRoles = to.meta.Roles
                 if(requiredRoles) {
                     const isAuthorization = RBAC(activeRole, requiredRoles)
-                    isAuthorization ? next() : next('/')
+                    isAuthorization ? next() : next(logout())
                 } else{
                     next()
                 }
