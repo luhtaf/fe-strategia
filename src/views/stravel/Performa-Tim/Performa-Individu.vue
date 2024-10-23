@@ -33,7 +33,7 @@ const getDataKehadiran = (nama)=>{
     })
     .catch((error)=>{
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'gagal load data top5', life: 3000 });
-        console.log(error)
+        console.error(error)
     })
     .finally(()=>{
         loading.value.loadKehadiranKegiatan=false
@@ -57,7 +57,7 @@ const getDataArahan = (nama)=>{
     })
     .catch((error)=>{
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'gagal load data top5', life: 3000 });
-        console.log(error)
+        console.error(error)
     })
     .finally(()=>{
         loading.value.loadPenyelesaianArahan=false

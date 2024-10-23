@@ -35,7 +35,7 @@ const removeUndangan=async (data,all=false)=>{
         toast.add({ severity: 'success', summary: 'Berhasil', detail: `${response.data.message} : ${data.nama}`, life: 3000 });
     })
     .catch(error=>{
-        console.log(error)
+        console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal', detail: `gagal hapus ${data.nama} sebagai undangan`, life: 3000 });
     })
     .finally(()=>{
@@ -53,7 +53,7 @@ const initDataKaryawanFromDB=async ()=>{
             listKaryawan.value = response.data
         })
         .catch((error) => {
-            console.log(error)
+            console.error(error)
         })
         .finally(()=>{
             loading.value.loadKaryawan=false
@@ -76,7 +76,7 @@ const initDataUndangan=async ()=>{
         initDataKaryawanExisting()
     })
     .catch((error) => {
-        console.log(error)
+        console.error(error)
     })
     .finally(()=>{
         loading.value.loadUndangan=false
@@ -151,7 +151,7 @@ const kosongkanUndangan=()=>{
         toast.add({ severity: 'success', summary: 'Berhasil', detail: `${response.data.message}`, life: 3000 });
     })
     .catch(error=>{
-        console.log(error)
+        console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal', detail: `gagal mengosongkan daftar undangan`, life: 3000 });
     })
     .finally(()=>{
@@ -177,8 +177,8 @@ const simpanUndangan=async (undangan,jenis)=>{
     .then((data)=>{
         toast.add({ severity: 'success', summary: 'Berhasil', detail: `Berhasil Menambahkan ${undangan.nama} ke Undangan`, life: 3000 });
     })
-    .catch(err=>{
-        console.log(err)
+    .catch(error=>{
+        console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal Menambahkan ${undangan.nama} ke Undangan`, life: 3000 });
     })
 }

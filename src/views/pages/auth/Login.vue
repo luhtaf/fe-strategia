@@ -9,7 +9,7 @@ import { jwtDecode } from "jwt-decode";
 
 const email = ref('');
 const password = ref('');
-
+const loading=ref(false)
 
 const router = useRouter()
 
@@ -20,10 +20,9 @@ const login=()=>{
         email:email.value,
         password:password.value
     }
+    loading.value=true
     axios({url,method,data})
     .then((response)=>{
-        
-
         Swal.fire({
             title: 'Berhasil',
             html: `
@@ -46,7 +45,7 @@ const login=()=>{
         })
     })
     .catch((error)=>{
-        console.log(error)
+        console.error(error)
         Swal.fire({
             title: 'Gagal',
             html: `
@@ -60,7 +59,7 @@ const login=()=>{
         });
     })
     .finally(()=>{
-        // loading.value.loadArahan=false
+        loading.value=false
     })
 }
 </script>
@@ -71,17 +70,17 @@ const login=()=>{
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                 <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
                     <div class="text-center mb-5">
-                        <div class="text-900 text-3xl font-medium mb-3">Selamat datang di aplikasi instraction</div>
+                        <div class="text-900 text-3xl font-medium mb-3">Selamat datang di aplikasi SIMANTAP</div>
                         <span class="text-600 font-medium">Silahkan login</span>
                     </div>
 
                     <div>
                         <label class="block text-900 text-xl font-medium mb-2">Email</label>
-                        <InputText v-model="email" type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" />
+                        <InputText :disabled="loading" v-model="email" type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" />
 
                         <label class="block text-900 font-medium text-xl mb-2">Password</label>
-                        <Password v-model="password" placeholder="Password" :toggleMask="true" :feedback="false" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
-                        <Button @click="login()" label="Login" class="w-full p-3 text-xl"></Button>
+                        <Password :disabled="loading" v-model="password" placeholder="Password" :toggleMask="true" :feedback="false" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
+                        <Button :disabled="loading" label="Login" @click="login()" :loading="loading" class="w-full p-3 text-xl"/>
                     </div>
                 </div>
             </div>

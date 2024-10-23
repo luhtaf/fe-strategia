@@ -18,7 +18,7 @@ const initJumlahArahanBelumTL=()=>{
         jumlahArahanBelumTL.value=response.data.jumlah
     })
     .catch((error)=>{
-        console.log(error)
+        console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal Mengambil Jumlah Arahan, harap periksa console', life: 3000 });
     })
 }

@@ -26,7 +26,7 @@ const initDataKaryawan=()=>{
             listKaryawan.value = response.data
         })
         .catch((error) => {
-            console.log(error)
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal inisialisasi data karyawan, harap periksa console atau reload halaman`, life: 3000 });
         })
 }
@@ -56,7 +56,7 @@ const initDataUndangan=()=>{
             initKeteranganUndangan(listUndangan)
         })
         .catch((error) => {
-            console.log(error)
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal load data undangan, harap reload halaman`, life: 3000 });
         })
         .finally(()=>{
@@ -97,8 +97,8 @@ const simpanUndangan=async (undangan,diwakilkan=false,all=false)=>{
         .then((data)=>{
             if (!all) toast.add({ severity: 'success', summary: 'Berhasil', detail: `Berhasil Update Kehadiran ${undangan.nama}`, life: 3000 });
         })
-        .catch(err=>{
-            console.log(err)
+        .catch(error=>{
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal Update Kehadiran ${undangan.nama}`, life: 3000 });
         })
     }

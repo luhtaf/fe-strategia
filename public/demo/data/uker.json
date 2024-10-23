@@ -1,0 +1,129 @@
+[
+  {
+    "NO": 1,
+    "nama": "SEKRETARIAT UTAMA"
+  },
+  {
+    "NO": 2,
+    "nama": "DEPUTI 1"
+  },
+  {
+    "NO": 3,
+    "nama": "DEPUTI 2"
+  },
+  {
+    "NO": 4,
+    "nama": "DEPUTI 3"
+  },
+  {
+    "NO": 5,
+    "nama": "DEPUTI 4"
+  },
+  {
+    "NO": 6,
+    "nama": "INSPEKTORAT"
+  },
+  {
+    "NO": 7,
+    "nama": "PUSSERTIF (P1)"
+  },
+  {
+    "NO": 8,
+    "nama": "PUSDATIK (P2)"
+  },
+  {
+    "NO": 9,
+    "nama": "PUSBANGSDM (P3)"
+  },
+  {
+    "NO": 10,
+    "nama": "POLTEKSSN"
+  },
+  {
+    "NO": 11,
+    "nama": "BIRO RENKEU (S1)"
+  },
+  {
+    "NO": 12,
+    "nama": "BIRO OSDM (S2)"
+  },
+  {
+    "NO": 13,
+    "nama": "BIRO KUMKOMLIK (S3)"
+  },
+  {
+    "NO": 14,
+    "nama": "BIRO UMUM (S4)"
+  },
+  {
+    "NO": 15,
+    "nama": "DIT STRATEGI KSS (D11)"
+  },
+  {
+    "NO": 16,
+    "nama": "DIT TATA KELOLA KSS (D12)"
+  },
+  {
+    "NO": 17,
+    "nama": "DIT TEKNOLOGI KSS (D13)"
+  },
+  {
+    "NO": 18,
+    "nama": "DIT SDM KSS (D14)"
+  },
+  {
+    "NO": 19,
+    "nama": "DIT OPSKAMSIBER (D21)",
+    "parent": "DEPUTI 2"
+  },
+  {
+    "NO": 20,
+    "nama": "DIT OPSKAMDALINFO (D22)",
+    "parent": "DEPUTI 2"
+  },
+  {
+    "NO": 21,
+    "nama": "DIT OPSAN (D23)",
+    "parent": "DEPUTI 2"
+  },
+  {
+    "NO": 22,
+    "nama": "DIT KAMSISAN PEMPUS (D31)"
+  },
+  {
+    "NO": 23,
+    "nama": "DIT KAMSISAN PEMDA (D32)"
+  },
+  {
+    "NO": 24,
+    "nama": "DIT KAMSISAN BANGMAN (D33)"
+  },
+  {
+    "NO": 25,
+    "nama": "DIT KSS KPP (D41)"
+  },
+  {
+    "NO": 26,
+    "nama": "DIT KSS ESDA (D42)"
+  },
+  {
+    "NO": 27,
+    "nama": "DIT KSS TIKMT (D43)"
+  },
+  {
+    "NO": 28,
+    "nama": "DIT KSS INDUSTRI (D44)"
+  },
+  {
+    "NO": 29,
+    "nama": "BSRE"
+  },
+  {
+    "NO": 30,
+    "nama": "BDS"
+  },
+  {
+    "NO": 31,
+    "nama": "JUBIR"
+  }
+]

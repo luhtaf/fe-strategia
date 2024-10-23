@@ -16,7 +16,7 @@ const router = createRouter({
                         requiresAuth: true,
                         requiresRBAC: true,
                         Roles:
-                            ['admin']
+                            ['admin','pimpinan']
                      }
                     
                 },
@@ -32,8 +32,6 @@ const router = createRouter({
                     component: () => import('@/views/stravel/Performa-Tim/Performa-Tim.vue'),
                     meta: { requiresAuth: true }
                 },
-
-
                 {
                     path: '/dashboard',
                     name: 'dashboard',
@@ -212,7 +210,6 @@ router.beforeEach((to, from, next) => {
     localStorage.setItem('prevPath', from.path)
     localStorage.setItem('curPath', to.path)
     const isAuthenticated = localStorage.getItem('accessToken') ? true : false;
-    console.log(isAuthenticated)
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (isAuthenticated) {            
             const activeRole = localStorage.getItem('activeRole')
@@ -220,7 +217,8 @@ router.beforeEach((to, from, next) => {
                 const requiredRoles = to.meta.Roles
                 if(requiredRoles) {
                     const isAuthorization = RBAC(activeRole, requiredRoles)
-                    isAuthorization ? next() : next(logout())
+                    // isAuthorization ? next() : next(logout())
+                    isAuthorization ? next() : next('/arahan-pimpinan')
                 } else{
                     next()
                 }

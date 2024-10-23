@@ -129,7 +129,7 @@ const simpanRapat=()=>{
     })
     .catch((error)=>{
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'gagal menyimpan data rapat', life: 3000 });
-        console.log(error)
+        console.error(error)
     })
 }
 
@@ -158,7 +158,7 @@ const initSuggestTema=()=>{
     })
     .catch((error)=>{
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'gagal load tema rapat', life: 3000 });
-        console.log(error)
+        console.error(error)
     })
     .finally(()=>{
         loading.value.loadSuggest=false

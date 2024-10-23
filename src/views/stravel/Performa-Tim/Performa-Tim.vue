@@ -36,7 +36,7 @@ const initDataKaryawan=async ()=>{
             // getDataArahan(listKaryawan.value[0]['nama'])
         })
         .catch((error) => {
-            console.log(error)
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal inisialisasi data karyawan, harap periksa console atau reload halaman`, life: 3000 });
         })
         .finally(()=>{

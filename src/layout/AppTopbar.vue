@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 
-const { layoutConfig, onMenuToggle } = useLayout();
+const { onMenuToggle } = useLayout();
 
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
@@ -21,6 +21,12 @@ const logoUrl = computed(() => {
     // return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
     return `/assets/icons/icon-192x192.png`
 });
+
+const userData = ref(JSON.parse(localStorage.getItem('userData')))
+const userTopMenu = ref(null);
+const onUserButtonClick = (event) => {
+    userTopMenu.value.toggle(event);
+};
 
 const onTopBarMenuButton = () => {
     topbarMenuActive.value = !topbarMenuActive.value;
@@ -72,7 +78,7 @@ const logout = () => {
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo">
             <img :src="logoUrl" alt="logo" />
-            <span>Instraction</span>
+            <span>SIMANTAP</span>
         </router-link>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
@@ -84,18 +90,55 @@ const logout = () => {
         </button>
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
+            <!-----/>><button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
                 <i class="pi pi-calendar"></i>
                 <span>Calendar</span>
             </button>
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
+            </!--->
+            <button @click="onUserButtonClick" class="p-link layout-topbar-button">
                 <i class="pi pi-user"></i>
                 <span>Profile</span>
             </button>
+            <OverlayPanel ref="userTopMenu" appendTo="body">
+                <div class="grid p-fluid" style="width: 22em;">
+                    <div class="col-12">
+                        <div class="card mb-0">
+                            <div class="flex justify-content-between mb-3">
+                                <div>
+                                    <!-- <span class="block text-500 font-medium mb-3">{{ userData.nama }}</span> -->
+                                    <div class="text-900 font-medium text-xl">{{ userData.name }}</div>
+                                </div>
+                            </div>
+
+                            <div class="grid p-fluid" style="padding-top: 1em;">
+                                <!-- <div class="row"> -->
+                                    <div class="col-4">
+                                        <p>Role:</p>
+                                    </div>
+                                    <div class="col-8">
+                                        <b>{{userData.role[0]}}</b>
+                                    </div>
+                                    <template v-if="userData.unit_kerja">
+                                        <div class="col-4">
+                                            <p>Unit Kerja:</p>
+                                        </div>
+                                        <div class="col-8">
+                                            <b>{{userData.unit_kerja}}</b>
+                                        </div>
+                                    </template>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </OverlayPanel>
+            <!-----/>
             <button @click="onSettingsClick()" class="p-link layout-topbar-button">
                 <i class="pi pi-cog"></i>
                 <span>Settings</span>
             </button>
+            </!--->
             <button @click="logout()" class="p-link layout-topbar-button">
                 <i class="pi pi-sign-out"></i>
                 <span>Logout</span>

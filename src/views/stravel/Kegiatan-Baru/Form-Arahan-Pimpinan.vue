@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import axios from '../axios_intercept'
-import { URL_GET_ALL_KARYAWAN, URL_ARAHAN, URL_ARAHAN_BY_ID } from '../url'
+import { URL_GET_ALL_UNIT_KERJA, URL_ARAHAN, URL_ARAHAN_BY_ID } from '../url'
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 
@@ -21,39 +21,40 @@ const props=defineProps({
 
 const listArahan=ref([])
 const initDataArahan=()=>{
-    loading.value.loadArahan=true
-    const {id}=props.currentData
-    axios({
-            url: URL_ARAHAN(id),
-            method: 'get',
-        })
-        .then((response) => {
-            if(response.data.data) listArahan.value = response.data.data
-            initPelaksana()
-        })
-        .catch((error) => {
-            console.log(error)
-            toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal inisialisasi data arahan, harap periksa console atau reload halaman`, life: 3000 });
-        })
-        .finally(()=>{
-            loading.value.loadArahan=false
-        })
+    listArahan.value=[]
+    loading.value.loadArahan=false
+    // const {id}=props.currentData
+    // axios({
+    //         url: URL_ARAHAN(id),
+    //         method: 'get',
+    //     })
+    //     .then((response) => {
+    //         if(response.data.data) listArahan.value = response.data.data
+    //         initPelaksana()
+    //     })
+    //     .catch((error) => {
+    //         console.error(error)
+    //         toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal inisialisasi data arahan, harap periksa console atau reload halaman`, life: 3000 });
+    //     })
+    //     .finally(()=>{
+    //         loading.value.loadArahan=false
+    //     })
 }
 
-const listKaryawan=ref()
+const listUnitKerja=ref()
 const initDataKaryawan=async ()=>{
     loading.value.loadKaryawan=true
     await axios({
-            url: URL_GET_ALL_KARYAWAN,
+            url: URL_GET_ALL_UNIT_KERJA,
             method: 'get',
         })
         .then((response) => {
             
-            listKaryawan.value = response.data
+            listUnitKerja.value = response.data
             
         })
         .catch((error) => {
-            console.log(error)
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal inisialisasi data karyawan, harap periksa console atau reload halaman`, life: 3000 });
         })
         .finally(()=>{
@@ -66,7 +67,7 @@ const matchDropDown = (array,nilai) => {
 };
 const initPelaksana=()=>{
     listArahan.value.forEach(arahan => {
-        arahan.pelaksana=matchDropDown(listKaryawan,arahan.pelaksana)
+        arahan.pelaksana=matchDropDown(listUnitKerja,arahan.pelaksana)
         arahan.terupdate=false
     });
 }
@@ -115,8 +116,8 @@ const simpanArahan=async (arahan)=>{
         .then((data)=>{
             toast.add({ severity: 'success', summary: 'Berhasil', detail: `Berhasil Update data arahan ${arahan.arahan}`, life: 3000 });
         })
-        .catch(err=>{
-            console.log(err)
+        .catch(error=>{
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal Menambahkan arahan ${arahan.arahan} ke Undangan`, life: 3000 });
         })
     }
@@ -147,7 +148,7 @@ const hapusArahan=(arahan,index)=>{
             initDataArahan()
         })
         .catch((error)=>{
-            console.log(error)
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: `gagal hapus arahan ${arahan.arahan}, cek console untuk detail`, life: 3000 });
         })
     }
@@ -193,7 +194,7 @@ const kosongkanArahan=()=>{
         toast.add({ severity: 'success', summary: 'Berhasil', detail: `${response.data.message}`, life: 3000 });
     })
     .catch(error=>{
-        console.log(error)
+        console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal', detail: `gagal mengosongkan arahan`, life: 3000 });
     })
     .finally(()=>{
@@ -237,7 +238,7 @@ const kosongkanArahan=()=>{
                 <div class="grid formgrid">
                     <div class="col-12">
                         <IconField>
-                            <Dropdown @change="arahanTerupdate(arahan)" :disabled="loading.loadKaryawan" v-model="arahan.pelaksana" :options="listKaryawan" filter optionLabel="nama" placeholder="Pelaksana" />
+                            <Dropdown @change="arahanTerupdate(arahan)" :disabled="loading.loadKaryawan" v-model="arahan.pelaksana" :options="listUnitKerja" filter optionLabel="nama" placeholder="Pelaksana" />
                         </IconField>
                     </div>
                 </div>

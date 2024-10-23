@@ -18,7 +18,7 @@ const initKelengkapanRapat=()=>{
         if (response.data.data) currentData.value = response.data.data
     })
     .catch((error) => {
-        console.log(error)
+        console.error(error)
     })
     .finally(()=>{
         loading.value.loadKelengkapan=false
@@ -64,7 +64,7 @@ const simpanKelengkapan=()=>{
         toast.add({ severity: 'success', summary: 'Berhasil', detail: `Sukses mengubah data kelengkapan`, life: 3000 });
     })
     .catch((error) => {
-        console.log(error)
+        console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal mengubah data kelengkapan`, life: 3000 });
     })
     .finally(()=>{

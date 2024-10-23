@@ -1,7 +1,7 @@
 <script setup>
 import axios from '../axios_intercept'
 import { ref, onBeforeMount } from 'vue';
-import { URL_ARAHAN, URL_ARAHAN_BY_ID, URL_GET_ALL_KARYAWAN } from '../url'
+import { URL_ARAHAN, URL_ARAHAN_BY_ID, URL_GET_ALL_UNIT_KERJA } from '../url'
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 const dataArahan=ref(null)
@@ -13,12 +13,13 @@ const props = defineProps({
     currentData:Object
 })
 
-onBeforeMount(()=>{
-    initDataArahan()
-    initDataKaryawan()
+onBeforeMount(async ()=>{
+    await initDataUnitKerja()
+    await initDataArahan()
+    
 })
 const paginator=ref(null)
-const initDataArahan=(size=10,page=1)=>{
+const initDataArahan=async (size=10,page=1)=>{
     loading.value.loadArahan=true
     const {id}=props.currentData
     var url=`${URL_ARAHAN(id)}?size=${size}&page=${page}`
@@ -42,7 +43,7 @@ const initDataArahan=(size=10,page=1)=>{
         initPelaksana()
     })
     .catch((error)=>{
-        console.log(error)
+        console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal Mengambil Data Arahan, harap periksa console', life: 3000 });
     })
     .finally(()=>{
@@ -83,7 +84,7 @@ const editData=(data)=>{
     data.isEdit=true
 }
 
-const saveData=(data)=>{
+const saveData=async (data)=>{
     data.isEdit=false
     
     if(data.terupdate)
@@ -102,7 +103,7 @@ const saveData=(data)=>{
             toast.add({ severity: 'success', summary: 'Berhasil', detail: `${response.data.message} :${data.arahan}`, life: 3000 });
         })
         .catch((error)=>{
-            console.log(error)
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal Mengambil Data Arahan, harap periksa console', life: 3000 });
         })
         .finally(()=>{
@@ -111,20 +112,20 @@ const saveData=(data)=>{
     }
 }
 
-const listKaryawan=ref()
-const initDataKaryawan=async ()=>{
+const listUnitKerja=ref()
+const initDataUnitKerja=async ()=>{
     loading.value.loadKaryawan=true
     await axios({
-            url: URL_GET_ALL_KARYAWAN,
+            url: URL_GET_ALL_UNIT_KERJA,
             method: 'get',
         })
         .then((response) => {
             
-            listKaryawan.value = response.data
+            listUnitKerja.value = response.data
             
         })
         .catch((error) => {
-            console.log(error)
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal inisialisasi data karyawan, harap periksa console atau reload halaman`, life: 3000 });
         })
         .finally(()=>{
@@ -137,7 +138,7 @@ const matchDropDown = (array,nilai) => {
 };
 const initPelaksana=()=>{
     dataArahan.value.data.forEach(arahan => {
-        arahan.pelaksana_pilih=matchDropDown(listKaryawan,arahan.pelaksana)
+        arahan.pelaksana_pilih=matchDropDown(listUnitKerja,arahan.pelaksana)
         arahan.terupdate=false
     });
 }
@@ -314,7 +315,7 @@ const clearFilter=()=>{
                             style="font-size: 1rem; cursor: pointer;">
                         </i>
                         <OverlayPanel ref="opPelaksana" appendTo="body" id="overlay_panel">
-                            <Dropdown @change="doSearch" :options="listKaryawan" optionLabel="nama" v-model="search.pelaksana" filter placeholder="Pelaksana" />
+                            <Dropdown @change="doSearch" :options="listUnitKerja" optionLabel="nama" v-model="search.pelaksana" filter placeholder="Pelaksana" />
                         </OverlayPanel>
                     </template>
                     <template #body="{ data }">
@@ -323,7 +324,7 @@ const clearFilter=()=>{
                         </template>
                         <template v-else>
                             <template v-if="data.isEdit">
-                                <Dropdown @change="arahanTerupdate(data)" v-model="data.pelaksana_pilih" :options="listKaryawan" filter optionLabel="nama" placeholder="Pelaksana" />
+                                <Dropdown @change="arahanTerupdate(data)" v-model="data.pelaksana_pilih" :options="listUnitKerja" filter optionLabel="nama" placeholder="Pelaksana" />
                             </template>
                             <template v-else>
                                 {{ data.pelaksana }}
@@ -494,7 +495,7 @@ const clearFilter=()=>{
                 :totalRecords="dataArahan?.total"
                 :rowsPerPageOptions="[5, 10, 25, 50, 100]"
                 v-model:first="paginator"
-                :currentPageReportTemplate="`Menampilkan ${paginator + 1} - ${Math.min(paginator + dataArahan.per_page, dataArahan.total)} dari ${dataArahan.total} data`"
+                :currentPageReportTemplate="`Menampilkan ${paginator + 1} - ${Math.min(paginator + dataArahan?.per_page, dataArahan?.total) | 0} dari ${dataArahan?.total | 0} data`"
                 template="PrevPageLink PageLinks NextPageLink RowsPerPageDropdown CurrentPageReport"
                 @page="updatePage($event)"
             />

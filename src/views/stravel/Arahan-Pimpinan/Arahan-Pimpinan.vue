@@ -1,22 +1,23 @@
 <script setup>
 import axios from '../axios_intercept'
 import { ref, onBeforeMount } from 'vue';
-import { URL_ALL_ARAHAN, URL_ARAHAN_BY_ID, URL_GET_ALL_KARYAWAN } from '../url'
+import { URL_ALL_ARAHAN, URL_ARAHAN_BY_ID, URL_ARAHAN_LAPORAN, URL_GET_ALL_UNIT_KERJA } from '../url'
 import { useToast } from 'primevue/usetoast';
 import { parsingDateToURL } from '../library'
 const toast = useToast();
 const dataArahan=ref(null)
 const loading=ref({
-    loadArahan:false
+    loadArahan:true
 })
-onBeforeMount(()=>{
-    initDataArahan()
-    initDataKaryawan()
+onBeforeMount(async ()=>{
+    await initDataUnitKerja()
+    await initDataArahan()
 })
+const userData = ref(JSON.parse(localStorage.getItem('userData')))
 const paginator=ref(null)
 const breadcrumbHome = ref({ icon: 'pi pi-home', route: '/' });
 const breadcrumbItems = ref([{ label: 'Daftar Arahan' }]);
-const initDataArahan=(size=10,page=1)=>{
+const initDataArahan=async (size=10,page=1)=>{
     loading.value.loadArahan=true
 
     var url=`${URL_ALL_ARAHAN}?size=${size}&page=${page}`
@@ -40,16 +41,17 @@ const initDataArahan=(size=10,page=1)=>{
         initPelaksana()
     })
     .catch((error)=>{
-        console.log(error)
+        console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal Mengambil Data Arahan, harap periksa console', life: 3000 });
     })
     .finally(()=>{
         loading.value.loadArahan=false
     })
 }
-const formatTimestampToWIB = (timestamp) => {
+// const cekJikaArahandidiamkan7Hari = 
+const formatTimestampToWIB = (timestamp, kosong=true) => {
     if (!timestamp) { // Check if timestamp is null or undefined
-        return "Belum ada Batas Waktu";
+        return kosong?"Belum ada Batas Waktu":"-";
     }
     const options = {
         year: 'numeric',
@@ -83,24 +85,31 @@ const editData=(data)=>{
 
 const saveData=(data)=>{
     data.isEdit=false
-    
     if(data.terupdate)
     {
         data.isLoading=true
         data.pelaksana=data.pelaksana_pilih.nama
         data._method='PATCH'
-        const url=URL_ARAHAN_BY_ID(data.rapat_id,data.id)
+        console.log(userData)
+    console.log(userData.value)
+        const isAdmin = userData.value.role[0]=='admin'?true:false
+        const url= isAdmin? URL_ARAHAN_BY_ID(data.rapat_id,data.id):URL_ARAHAN_LAPORAN(data.rapat_id,data.id)
         axios({
             url,
             method:'post',
             data
         })
         .then((response)=>{
+            // data=response.data
+            // console.log(data)
+            // console.log(response.data)
+            data.status=response.data.data.status
+            // data=response.data.data
             delete data.terupdate
             toast.add({ severity: 'success', summary: 'Berhasil', detail: `${response.data.message} :${data.arahan}`, life: 3000 });
         })
         .catch((error)=>{
-            console.log(error)
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal Mengambil Data Arahan, harap periksa console', life: 3000 });
         })
         .finally(()=>{
@@ -109,20 +118,19 @@ const saveData=(data)=>{
     }
 }
 
-const listKaryawan=ref()
-const initDataKaryawan=async ()=>{
+const listUnitKerja=ref()
+const initDataUnitKerja=async ()=>{
     loading.value.loadKaryawan=true
     await axios({
-            url: URL_GET_ALL_KARYAWAN,
+            url: URL_GET_ALL_UNIT_KERJA,
             method: 'get',
         })
         .then((response) => {
-            
-            listKaryawan.value = response.data
+            listUnitKerja.value = response.data
             
         })
         .catch((error) => {
-            console.log(error)
+            console.error(error)
             toast.add({ severity: 'error', summary: 'Gagal', detail: `Gagal inisialisasi data karyawan, harap periksa console atau reload halaman`, life: 3000 });
         })
         .finally(()=>{
@@ -135,12 +143,11 @@ const matchDropDown = (array,nilai) => {
 };
 const initPelaksana=()=>{
     dataArahan.value.data.forEach(arahan => {
-        arahan.pelaksana_pilih=matchDropDown(listKaryawan,arahan.pelaksana)
+        arahan.pelaksana_pilih=matchDropDown(listUnitKerja,arahan.pelaksana)
         arahan.terupdate=false
     });
 }
 const arahanTerupdate=arahan=>{
-    console.log(arahan)
     arahan.terupdate=true
 }
 
@@ -161,6 +168,13 @@ const toggleArahan=(event)=>{
 const opPelaksana=ref()
 const togglePelaksana=(event)=>{
     opPelaksana.value.toggle(event);
+}
+
+
+
+const opBatasKonfirmasi=ref()
+const toggleKonfirmasi=(event)=>{
+    opBatasKonfirmasi.value.toggle(event);
 }
 
 const opDeadline=ref()
@@ -198,7 +212,8 @@ const search=ref({
     deadline:null,
     penyelesaian:null,
     data_dukung:null,
-    keterangan:null
+    keterangan:null,
+    batas_konfirmasi:null,
 })
 const doSearch=()=>{
     search.value.isSearch=true
@@ -216,7 +231,8 @@ const clearFilter=()=>{
         deadline:null,
         penyelesaian:null,
         data_dukung:null,
-        keterangan:null
+        keterangan:null,
+        batas_konfirmasi:null,
     }
     initDataArahan(dataArahan.per_page)
 }
@@ -306,17 +322,22 @@ const clearFilter=()=>{
                             <Skeleton></Skeleton>
                         </template>
                         <template v-else>
-                            <template v-if="data.isEdit">
+                            <template v-if="data.isEdit && userData?.role[0]=='admin'">
                                 <InputText @change="arahanTerupdate(data)" v-model="data.arahan" placeholder="Arahan"/>
                             </template>
                             <template v-else>
-                                <p :class="{
-                                    'bg-red-100':data.status=='Gagal',
-                                    'bg-green-100':data.status=='Selesai',
-                                    'bg-orange-100':data.status=='Dalam Proses',
-                                    'bg-black-100':data.status=='Tidak ada Tindak Lanjut',
-                                    'bg-gray-100':data.status==null
-                                    }">{{ data.arahan }}</p>
+                                <div 
+                                    :class="{
+                                        'bg-red-100': data.status === 'Gagal',
+                                        'bg-green-100': data.status === 'Selesai',
+                                        'bg-orange-100': data.status === 'Dalam Proses',
+                                        'bg-black-100': data.status === 'Tidak ada Tindak Lanjut',
+                                        'bg-gray-100': data.status == null
+                                    }"
+                                    style="padding: 0.5rem"
+                                >
+                                    <p>{{ data.arahan }}</p>
+                                </div>
                             </template>
                         </template>
                     </template>
@@ -331,7 +352,7 @@ const clearFilter=()=>{
                             style="font-size: 1rem; cursor: pointer;">
                         </i>
                         <OverlayPanel ref="opPelaksana" appendTo="body" id="overlay_panel">
-                            <Dropdown @change="doSearch" :options="listKaryawan" optionLabel="nama" v-model="search.pelaksana" filter placeholder="Pelaksana" />
+                            <Dropdown @change="doSearch" :options="listUnitKerja" optionLabel="nama" v-model="search.pelaksana" filter placeholder="Pelaksana" />
                         </OverlayPanel>
                     </template>
                     <template #body="{ data }">
@@ -339,8 +360,8 @@ const clearFilter=()=>{
                             <Skeleton></Skeleton>
                         </template>
                         <template v-else>
-                            <template v-if="data.isEdit">
-                                <Dropdown @change="arahanTerupdate(data)" v-model="data.pelaksana_pilih" :options="listKaryawan" filter optionLabel="nama" placeholder="Pelaksana" />
+                            <template v-if="data.isEdit && userData?.role[0]=='admin'">
+                                <Dropdown @change="arahanTerupdate(data)" v-model="data.pelaksana_pilih" :options="listUnitKerja" filter optionLabel="nama" placeholder="Pelaksana" />
                             </template>
                             <template v-else>
                                 {{ data.pelaksana }}
@@ -371,11 +392,44 @@ const clearFilter=()=>{
                             <Skeleton></Skeleton>
                         </template>
                         <template v-else>
-                            <template v-if="data.isEdit">
-                                <Calendar @change="arahanTerupdate(data)" v-model="data.deadline" :showIcon="true" :manualInput="true" showTime hourFormat="24"></Calendar>
+                            <template v-if="data.isEdit && userData?.role[0]=='admin'">
+                                <Calendar @change="arahanTerupdate(data)" @date-select="arahanTerupdate(data)" v-model="data.deadline" :showIcon="true" :manualInput="true" showTime hourFormat="24"></Calendar>
                             </template>
                             <template v-else>
                                 {{ formatTimestampToWIB(data.deadline) }}
+                            </template>
+                        </template>
+
+                    </template>
+                </Column>
+
+                <Column field="batas_konfirmasi" style="min-width: 12rem">
+                    <template #header>
+                        Batas Konfirmasi &nbsp;
+                        <i 
+                            class="pi pi-filter" 
+                            @click="toggleKonfirmasi"
+                            style="font-size: 1rem; cursor: pointer;">
+                        </i>
+                        <OverlayPanel ref="opBatasKonfirmasi" appendTo="body" id="overlay_panel">
+                            <IconField iconPosition="left">
+                                <InputGroup>
+                                    <Button icon="pi pi-search" @click="doSearch" />
+                                    <Calendar v-model="search.batas_konfirmasi" placeholder="Tanggal dan Waktu Rapat" :manualInput="true" showTime hourFormat="24" />
+                                </InputGroup>
+                            </IconField>
+                        </OverlayPanel>
+                    </template>
+                    <template #body="{ data }">
+                        <template v-if="data.isLoading">
+                            <Skeleton></Skeleton>
+                        </template>
+                        <template v-else>
+                            <template v-if="data.isEdit && userData?.role[0]=='admin'">
+                                <Calendar @change="arahanTerupdate(data)" @date-select="arahanTerupdate(data)" v-model="data.batas_konfirmasi" :showIcon="true" :manualInput="true" showTime hourFormat="24"></Calendar>
+                            </template>
+                            <template v-else>
+                                {{ formatTimestampToWIB(data.batas_konfirmasi,false) }}
                             </template>
                         </template>
 
@@ -399,11 +453,19 @@ const clearFilter=()=>{
                             <Skeleton></Skeleton>
                         </template>
                         <template v-else>
-                            <template v-if="data.isEdit">
+                            <template v-if="data.isEdit && userData?.role[0]=='admin'">
                                 <Dropdown @change="arahanTerupdate(data)" v-model="data.status" :options="dropDownStatus" placeholder="Status" />
                             </template>
                             <template v-else>
-                                {{ data.status }}
+                                <template v-if="data.status=='Dalam Proses'">
+                                    {{ data.status }}
+                                    <template v-if="data.revisi>0">
+                                        - {{ data.revisi }}
+                                    </template>
+                                </template>
+                                <template v-else>
+                                    {{ data.status }}
+                                </template>
                             </template>
                         </template>
                     </template>
@@ -426,7 +488,7 @@ const clearFilter=()=>{
                             <Skeleton></Skeleton>
                         </template>
                         <template v-else>
-                            <template v-if="data.isEdit">
+                            <template v-if="data.isEdit && userData?.role[0]=='admin'">
                                 <Dropdown @change="arahanTerupdate(data)" v-model="data.penyelesaian" :options="dropDownPenyelesaian" placeholder="Penyelesaian" />
                             </template>
                             <template v-else>
@@ -511,7 +573,7 @@ const clearFilter=()=>{
                 :totalRecords="dataArahan?.total"
                 :rowsPerPageOptions="[5, 10, 25, 50, 100]"
                 v-model:first="paginator"
-                :currentPageReportTemplate="`Menampilkan ${paginator + 1} - ${Math.min(paginator + dataArahan.per_page, dataArahan.total)} dari ${dataArahan.total} data`"
+                :currentPageReportTemplate="`Menampilkan ${paginator + 1} - ${Math.min(paginator + dataArahan?.per_page, dataArahan?.total) | 0} dari ${dataArahan?.total | 0} data`"
                 template="PrevPageLink PageLinks NextPageLink RowsPerPageDropdown CurrentPageReport"
                 @page="updatePage($event)"
             />

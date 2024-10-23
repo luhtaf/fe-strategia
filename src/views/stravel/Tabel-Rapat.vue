@@ -32,6 +32,7 @@ const initDataRapat=(size=10,page=1)=>{
         dataRapat.value=response.data
     })
     .catch((error)=>{
+        console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal Mengambil Data Rapat', life: 3000 });
     })
     .finally(()=>{
@@ -100,7 +101,7 @@ const formatDate = (tanggal_mulai,tanggal_selesai) => {
         }
     }
     catch(error){
-        console.log(error)
+        console.error(error)
         return 'Format Tanggal Salah'
     }
 };
@@ -191,9 +192,6 @@ const initTema=()=>{
     })
     .then((response)=>{
         dropdownTema.value=response.data.tema
-        console.log(dropdownTema)
-        console.log(dropdownPimpinan)
-        console.log(response)
     })
     .catch((error)=>{
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal Mengambil Tema Rapat', life: 3000 });
@@ -361,7 +359,7 @@ const initTema=()=>{
                     :totalRecords="dataRapat?.meta?.total"
                     :rowsPerPageOptions="[5, 10, 25, 50, 100]"
                     v-model:first="paginator"
-                    :currentPageReportTemplate="`Menampilkan ${paginator + 1} - ${Math.min(paginator + dataRapat.meta.per_page, dataRapat.meta.total)} dari ${dataRapat.meta.total} data`"
+                    :currentPageReportTemplate="`Menampilkan ${paginator + 1} - ${Math.min(paginator + dataRapat?.meta?.per_page, dataRapat?.meta?.total)} dari ${dataRapat?.meta?.total} data`"
                     template="PrevPageLink PageLinks NextPageLink RowsPerPageDropdown CurrentPageReport"
                     @page="updatePage($event)"
                 />

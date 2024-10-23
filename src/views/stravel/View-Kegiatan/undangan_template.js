@@ -69,7 +69,7 @@ const formatDate = (value) => {
         }
     }
     catch(error){
-        console.log(error)
+        console.error(error)
         return 'Format Tanggal Salah'
     }
 };

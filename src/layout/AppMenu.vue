@@ -5,7 +5,7 @@ import AppMenuItem from './AppMenuItem.vue';
 
 const model = ref([
     {
-        label: 'Instraction',
+        label: 'SIMANTAP',
         items: [
             { label: 'Main Menu', icon: 'pi pi-fw pi-eye', to: '/' }
         ]

@@ -52,7 +52,7 @@ const getDataTop5Arahan = (sort_by='total',order='desc')=>{
     })
     .catch((error)=>{
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'gagal load data top5', life: 3000 });
-        console.log(error)
+        console.error(error)
     })
     .finally(()=>{
         loading.value.tableArahan=false
@@ -73,7 +73,7 @@ const getDataTop5Tema = ()=>{
     })
     .catch((error)=>{
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'gagal load data top5', life: 3000 });
-        console.log(error)
+        console.error(error)
     })
     .finally(()=>{
         loading.value.tableTema=false
@@ -105,7 +105,7 @@ const getDataTop5Penyelesaian = (sort_by='tepat_waktu',order='desc')=>{
     })
     .catch((error)=>{
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'gagal load data top5', life: 3000 });
-        console.log(error)
+        console.error(error)
     })
     .finally(()=>{
         loading.value.tablePenyelesaian=false
@@ -135,7 +135,7 @@ const getDataTop5Kehadiran = (sort_by='persentase_hadir',order='desc')=>{
     })
     .catch((error)=>{
         toast.add({ severity: 'error', summary: 'Gagal', detail: 'gagal load data top5', life: 3000 });
-        console.log(error)
+        console.error(error)
     })
     .finally(()=>{
         loading.value.tableKehadiran=false
