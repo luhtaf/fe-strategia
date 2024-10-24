@@ -125,17 +125,20 @@ const login=()=>{
                 <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
                     <div class="text-center mb-5">
                         <div class="text-900 text-3xl font-medium mb-3">Selamat datang di aplikasi SIMANTAP</div>
-                        <span class="text-600 font-medium">Silahkan login</span>
+                        <!-- <span class="text-600 font-medium">Silahkan login</span> -->
+                        <div class="text-900 text-3xl font-medium mb-3">Silahkan login Melalui Aplikasi DWS</div>
                     </div>
 
-                    <div>
+                    <!-- <div>
                         <label class="block text-900 text-xl font-medium mb-2">Email</label>
                         <InputText :disabled="loading" v-model="email" type="text" placeholder="Email address" class="w-full md:w-30rem mb-5" style="padding: 1rem" />
 
                         <label class="block text-900 font-medium text-xl mb-2">Password</label>
-                        <Password :disabled="loading" v-model="password" placeholder="Password" :toggleMask="true" :feedback="false" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
-                        <Button :disabled="loading" label="Login" @click="login()" :loading="loading" class="w-full p-3 text-xl"/>
-                    </div>
+                        <Password :disabled="loading" v-model="password" placeholder="Password" :toggleMask="true" :feedback="false" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password> -->
+                        <a href="https://dws.bssn.go.id">
+                            <Button :disabled="loading" label="Login" :loading="loading" class="w-full p-3 text-xl"/>
+                        </a>
+                    <!-- </div> -->
                 </div>
             </div>
         </div>
