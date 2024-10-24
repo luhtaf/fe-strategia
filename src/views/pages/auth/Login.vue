@@ -1,7 +1,7 @@
 <script setup>
-import { ref,  } from 'vue';
+import { ref, onMounted  } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from '@/views/stravel/axios_intercept'
 import { ROOT_URL } from '../../stravel/root_url';
 import Swal from 'sweetalert2'
@@ -12,7 +12,61 @@ const password = ref('');
 const loading=ref(false)
 
 const router = useRouter()
+const route = useRoute()
+const token = ref()
+onMounted(() => {
+    token.value = route.query.token;
+    token.value?login_dws(token.value):null
+})
 
+const login_dws=(token)=>{
+    const url=`${ROOT_URL}/api/login-dws`
+    const method='post'
+    const data={
+        token
+    }
+    loading.value=true
+    axios({url,method,data})
+    .then((response)=>{
+        console.log(response)
+        Swal.fire({
+            title: 'Berhasil',
+            html: `
+                <p class="mb-2 font-weight-medium">
+                    sukses login
+                </p>
+            `,
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+        }).then(()=>{
+            const accessToken=response.data.token
+            localStorage.setItem("accessToken", accessToken)
+            var userData = jwtDecode(accessToken); 
+            var activeRole = userData?.role[0] || null
+            localStorage.setItem('userData', JSON.stringify(userData))
+            localStorage.setItem("activeRole", activeRole)
+            router.push('/')
+        })
+    })
+    .catch((error)=>{
+        console.error(error)
+        Swal.fire({
+            title: 'Gagal',
+            html: `
+                <p class="mb-2 font-weight-medium">
+                    gagal login, email atau password salah
+                </p>
+            `,
+            icon: 'error',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    })
+    .finally(()=>{
+        loading.value=false
+    })
+}
 const login=()=>{
     const url=`${ROOT_URL}/api/login`
     const method='post'

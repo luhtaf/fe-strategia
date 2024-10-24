@@ -15,7 +15,8 @@ export const URL_ARAHAN_BY_ID = (idRapat,idArahan) => `${URL_ARAHAN(idRapat)}/${
 export const URL_ARAHAN_LAPORAN = (idRapat,idArahan) => `${URL_RAPAT}/${idRapat}/laporan_arahan_pimpinan/${idArahan}`
 export const URL_TEMA= `${BASE_URL}/api/tema`
 export const URL_TOP5_TEMA= `${BASE_URL}/api/top5_tema`
-export const URL_GET_ALL_KARYAWAN=`http://localhost:5173/demo/data/karyawan.json`
+// export const URL_GET_ALL_KARYAWAN=`http://localhost:5173/demo/data/karyawan.json`
+export const URL_GET_ALL_KARYAWAN=`${BASE_URL}/api/karyawan`
 // export const URL_GET_ALL_UNIT_KERJA=`http://localhost:5173/demo/data/uker.json`
 export const URL_GET_ALL_UNIT_KERJA=`${BASE_URL}/api/units`
 export const URL_TOP5_ARAHAN=(sort_by,order)=>`${BASE_URL}/api/top5_arahan?sort_by=${sort_by}&order=${order}`
