@@ -263,7 +263,7 @@ const kosongkanArahan=()=>{
         </div>
         <div v-if="listArahan?.length==0" class="card grid p-fluid mt-12 lg:mt-0">
             <div class="col-12">
-                <InputText disabled placeholder="Belum ada Arahan"></InputText>
+                <InputText disabled placeholder="Belum ada Arahan yang akan diinputkan pada kegiatan ini"></InputText>
             </div>
             
         </div>
