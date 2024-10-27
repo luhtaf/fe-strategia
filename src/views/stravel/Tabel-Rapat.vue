@@ -346,7 +346,7 @@ const initTema=()=>{
                         headerClass="column-text-center"
                     >
                         <template #body="{ data }">
-                            <Button severity="success" @click="editModal(data,'viewModal')" rounded class="mr-1" icon="pi pi-eye"></Button>
+                            <!-- <Button severity="success" @click="editModal(data,'viewModal')" rounded class="mr-1" icon="pi pi-eye"></Button> -->
                             <Button severity="warning" @click="editModal(data)" rounded class="mr-1" icon="pi pi-wrench"></Button>
                             <Button severity="danger" rounded icon="pi pi-trash"></Button>
                         </template>
