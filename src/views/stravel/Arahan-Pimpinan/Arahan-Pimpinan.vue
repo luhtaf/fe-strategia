@@ -75,7 +75,7 @@ const dropDownStatus=ref([
     "Dalam Proses",
     "Drop",
     "Menunggu Konfirmasi Perbaikan",
-    "Tidak Ada Tindak Lanjut dari Unit Kerja"
+    "Belum Ada Tindak Lanjut dari Unit Kerja"
     // "Tidak ada Tindak Lanjut"
 ])
 const dropDownPenyelesaian=ref([
@@ -332,7 +332,7 @@ const clearFilter=()=>{
                                 <div 
                                     :class="{
                                         'bg-red-100': data.status === 'Gagal',
-                                        'bg-red-200':data.status === 'Tidak Ada Tindak Lanjut dari Unit Kerja',
+                                        'bg-red-200':data.status === 'Belum Ada Tindak Lanjut dari Unit Kerja',
                                         'bg-green-100': data.status === 'Selesai',
                                         'bg-green-200': data.status === 'Drop',
                                         'bg-orange-200': data.status === 'Dalam Proses',

@@ -249,30 +249,30 @@ const setchartDataArahan = () =>  {
                 backgroundColor: documentStyle.getPropertyValue('--green-500'),
                 data: selesai
             },
-            {
-                type: 'bar',
-                label: 'Gagal',
-                backgroundColor: documentStyle.getPropertyValue('--red-500'),
-                data: gagal
-            },
+            // {
+            //     type: 'bar',
+            //     label: 'Gagal',
+            //     backgroundColor: documentStyle.getPropertyValue('--red-500'),
+            //     data: gagal
+            // },
             {
                 type: 'bar',
                 label: 'Dalam Proses',
                 backgroundColor: documentStyle.getPropertyValue('--orange-500'),
                 data: dalam_proses
             },
-            {
-                type: 'bar',
-                label: 'Tidak ada Tindak Lanjut',
-                backgroundColor: documentStyle.getPropertyValue('--surface-500'),
-                data: tidak_ada_tindak_lanjut
-            },
-            {
-                type: 'bar',
-                label: 'Tanpa Keterangan',
-                backgroundColor: documentStyle.getPropertyValue('--gray-900'),
-                data: tanpa_keterangan
-            }
+            // {
+            //     type: 'bar',
+            //     label: 'Tidak ada Tindak Lanjut',
+            //     backgroundColor: documentStyle.getPropertyValue('--surface-500'),
+            //     data: tidak_ada_tindak_lanjut
+            // },
+            // {
+            //     type: 'bar',
+            //     label: 'Tanpa Keterangan',
+            //     backgroundColor: documentStyle.getPropertyValue('--gray-900'),
+            //     data: tanpa_keterangan
+            // }
         ]
     };
 };
@@ -345,12 +345,12 @@ const setchartDataPenyelesaian = () =>  {
                 backgroundColor: documentStyle.getPropertyValue('--red-500'),
                 data: terlambat
             },
-            {
-                type: 'bar',
-                label: 'Tidak Ada Tindak Lanjut',
-                backgroundColor: documentStyle.getPropertyValue('--surface-500'),
-                data: belum_tl
-            },
+            // {
+            //     type: 'bar',
+            //     label: 'Tidak Ada Tindak Lanjut',
+            //     backgroundColor: documentStyle.getPropertyValue('--surface-500'),
+            //     data: belum_tl
+            // },
         ]
     };
 };
@@ -623,7 +623,7 @@ const setchartOptionsTema = () =>  {
                         </i>
                     </template>
                 </Column>
-                <Column field="gagal">
+                <!-- <Column field="gagal">
                     <template #header>
                         Gagal &nbsp;
                         <i 
@@ -636,7 +636,7 @@ const setchartOptionsTema = () =>  {
                             style="cursor: pointer;">
                         </i>
                     </template>
-                </Column>
+                </Column> -->
                 <Column field="dalam_proses">
                     <template #header>
                         Dalam Proses &nbsp;
@@ -651,7 +651,7 @@ const setchartOptionsTema = () =>  {
                         </i>
                     </template>
                 </Column>
-                <Column field="tidak_ada_tindak_lanjut">
+                <!-- <Column field="tidak_ada_tindak_lanjut">
                     <template #header>
                         Tidak Ditindaklanjuti &nbsp;
                         <i 
@@ -678,7 +678,7 @@ const setchartOptionsTema = () =>  {
                             style="cursor: pointer;">
                         </i>
                     </template>
-                </Column>
+                </Column> -->
                 <template #empty> Data Top 5 Tidak ditemukan. </template>
                 <template #loading> Loading... Please wait. </template>
             </DataTable>
@@ -747,7 +747,7 @@ const setchartOptionsTema = () =>  {
                         </i>
                     </template>
                 </Column>
-                <Column field="belum_tl">
+                <!-- <Column field="belum_tl">
                     <template #header>
                         Tidak ada Tindak Lanjut &nbsp;
                         <i 
@@ -760,7 +760,7 @@ const setchartOptionsTema = () =>  {
                             style="cursor: pointer;">
                         </i>
                     </template>
-                </Column>
+                </Column> -->
                 <template #empty> Data Pelaksana Tidak ditemukan. </template>
                 <template #loading> Loading... Please wait. </template>
             </DataTable>
