@@ -89,14 +89,14 @@ const setChartKehadiran = () => {
 };
 
 const setChartArahan = () => {
-    const { selesai, gagal, dalam_proses, tidak_ada_tindak_lanjut, tanpa_keterangan }=dataArahan.value
+    const { selesai, dalam_proses }=dataArahan.value
     pieDataArahan.value = {
-        labels: ['Selesai', 'Gagal','Dalam Proses','Tidak Ada Tindak Lanjut', 'Tanpa Keterangan'],
+        labels: ['Selesai','Dalam Proses'],
         datasets: [
             {
-                data: [selesai, gagal, dalam_proses, tidak_ada_tindak_lanjut, tanpa_keterangan],
-                backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--red-500'), documentStyle.getPropertyValue('--orange-500'),documentStyle.getPropertyValue('--gray-500'),documentStyle.getPropertyValue('--black-500')],
-                hoverBackgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--red-500'), documentStyle.getPropertyValue('--orange-500'),documentStyle.getPropertyValue('--gray-500'),documentStyle.getPropertyValue('--black-500')]
+                data: [selesai, dalam_proses],
+                backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--orange-500')],
+                hoverBackgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--orange-500')]
             }
         ]
     };
