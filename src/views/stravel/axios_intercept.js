@@ -34,7 +34,6 @@ axiosInstance.interceptors.response.use(
       // Server responded with a status code outside the 2xx range
       const { status, data } = error.response;
        if (status === 403) {
-        console.log(data.status)
         data.status=='Token is Expired'?logout():null
       }
     } 

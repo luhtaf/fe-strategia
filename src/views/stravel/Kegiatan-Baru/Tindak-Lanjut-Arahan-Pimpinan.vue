@@ -2,12 +2,47 @@
 import axios from '../axios_intercept'
 import { ref, onBeforeMount } from 'vue';
 import { URL_ARAHAN, URL_ARAHAN_BY_ID, URL_GET_ALL_UNIT_KERJA } from '../url'
+import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 const dataArahan=ref(null)
 const loading=ref({
     loadArahan:false
 })
+
+const popup=ref(null)
+const confirmPopup = useConfirm();
+const confirmKosongkanArahan = (event,data) => {
+    confirmPopup.require({
+        target: event.target,
+        message: 'Apakah anda yakin akan menghapus arahan?',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+            deleteData(data)
+        },
+        reject: () => {
+            
+        }
+    });
+};
+const deleteData=(data)=>{
+    data.isLoading=true
+    const url= URL_ARAHAN_BY_ID(data.rapat_id,data.id)
+    axios({
+        url,
+        method:'delete',
+    })
+    .then((response)=>{
+        toast.add({ severity: 'success', summary: 'Berhasil', detail: `${response.data.message} :${data.arahan}`, life: 3000 });
+    })
+    .catch((error)=>{
+        console.error(error)
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal Mengambil Data Arahan, harap periksa console', life: 3000 });
+    })
+    .finally(()=>{
+        initDataArahan()
+    })   
+}
 
 const props = defineProps({
     currentData:Object
@@ -484,7 +519,8 @@ const clearFilter=()=>{
                     <template #body="{ data }">
                         <Button v-if="data.isEdit" severity="success" @click="saveData(data)" rounded class="mr-1" icon="pi pi-check"/>
                         <Button v-else severity="warning" @click="editData(data)" rounded class="mr-1" icon="pi pi-wrench"/>
-                        <Button severity="danger" rounded icon="pi pi-trash"></Button>
+                        <ConfirmPopup></ConfirmPopup>
+                        <Button v-if="isAdmin" ref="popup" @click="confirmKosongkanArahan($event,data)" severity="danger" rounded icon="pi pi-trash"></Button>
                     </template>
                 </Column>
             </DataTable>

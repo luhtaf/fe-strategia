@@ -2,6 +2,7 @@
 import axios from '../axios_intercept'
 import { ref, onBeforeMount } from 'vue';
 import { URL_ALL_ARAHAN, URL_ARAHAN_BY_ID, URL_ARAHAN_LAPORAN, URL_GET_ALL_UNIT_KERJA } from '../url'
+import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { parsingDateToURL } from '../library'
 const toast = useToast();
@@ -12,7 +13,42 @@ const loading=ref({
 onBeforeMount(async ()=>{
     await initDataUnitKerja()
     await initDataArahan()
+    isAdmin.value = userData.value.role[0]=='admin'?true:false
+    console.log(isAdmin)
 })
+const popup=ref(null)
+const confirmPopup = useConfirm();
+const confirmKosongkanArahan = (event,data) => {
+    confirmPopup.require({
+        target: event.target,
+        message: 'Apakah anda yakin akan menghapus arahan?',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+            deleteData(data)
+        },
+        reject: () => {
+            
+        }
+    });
+};
+const deleteData=(data)=>{
+    data.isLoading=true
+    const url= URL_ARAHAN_BY_ID(data.rapat_id,data.id)
+    axios({
+        url,
+        method:'delete',
+    })
+    .then((response)=>{
+        toast.add({ severity: 'success', summary: 'Berhasil', detail: `${response.data.message} :${data.arahan}`, life: 3000 });
+    })
+    .catch((error)=>{
+        console.error(error)
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal Mengambil Data Arahan, harap periksa console', life: 3000 });
+    })
+    .finally(()=>{
+        initDataArahan()
+    })   
+}
 const userData = ref(JSON.parse(localStorage.getItem('userData')))
 const paginator=ref(null)
 const breadcrumbHome = ref({ icon: 'pi pi-home', route: '/' });
@@ -85,7 +121,7 @@ const dropDownPenyelesaian=ref([
 const editData=(data)=>{
     data.isEdit=true
 }
-
+const isAdmin = ref([])
 const saveData=(data)=>{
     data.isEdit=false
     if(data.terupdate)
@@ -93,10 +129,8 @@ const saveData=(data)=>{
         data.isLoading=true
         data.pelaksana=data.pelaksana_pilih.nama
         data._method='PATCH'
-        console.log(userData)
-    console.log(userData.value)
-        const isAdmin = userData.value.role[0]=='admin'?true:false
-        const url= isAdmin? URL_ARAHAN_BY_ID(data.rapat_id,data.id):URL_ARAHAN_LAPORAN(data.rapat_id,data.id)
+        // const isAdmin = userData.value.role[0]=='admin'?true:false
+        const url= isAdmin.value? URL_ARAHAN_BY_ID(data.rapat_id,data.id):URL_ARAHAN_LAPORAN(data.rapat_id,data.id)
         axios({
             url,
             method:'post',
@@ -568,7 +602,8 @@ const clearFilter=()=>{
                     <template #body="{ data }">
                         <Button v-if="data.isEdit" severity="success" @click="saveData(data)" rounded class="mr-1" icon="pi pi-check"/>
                         <Button v-else severity="warning" @click="editData(data)" rounded class="mr-1" icon="pi pi-wrench"/>
-                        <Button severity="danger" rounded icon="pi pi-trash"></Button>
+                        <ConfirmPopup></ConfirmPopup>
+                        <Button v-if="isAdmin" ref="popup" @click="confirmKosongkanArahan($event,data)" severity="danger" rounded icon="pi pi-trash"></Button>
                     </template>
                 </Column>
             </DataTable>

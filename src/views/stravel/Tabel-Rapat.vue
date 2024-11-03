@@ -1,8 +1,9 @@
 <script setup>
 import { ref, onBeforeMount, watch } from 'vue';
-import { URL_RAPAT, URL_TEMA } from './url'
+import { URL_RAPAT, URL_RAPAT_BY_ID, URL_TEMA } from './url'
 import axios from './axios_intercept'
 import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 
 const paginator=ref(null)
 const dataRapat=ref({
@@ -10,6 +11,40 @@ const dataRapat=ref({
     links:null,
     meta:null
 })
+
+const popup=ref(null)
+const confirmPopup = useConfirm();
+const confirmDeleteRapat = (event,data) => {
+    confirmPopup.require({
+        target: event.target,
+        message: 'Apakah anda yakin akan menghapus rapat?',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+            deleteData(data)
+        },
+        reject: () => {
+            
+        }
+    });
+};
+const deleteData=(data)=>{
+    data.isLoading=true
+    const url= URL_RAPAT_BY_ID(data.id)
+    axios({
+        url,
+        method:'delete',
+    })
+    .then((response)=>{
+        toast.add({ severity: 'success', summary: 'Berhasil', detail: `${response.data.message} :${data.arahan}`, life: 3000 });
+    })
+    .catch((error)=>{
+        console.error(error)
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Gagal Mengambil Data Arahan, harap periksa console', life: 3000 });
+    })
+    .finally(()=>{
+        initDataArahan()
+    })   
+}
 
 const toast = useToast();
 const initDataRapat=(size=10,page=1)=>{
@@ -349,6 +384,8 @@ const initTema=()=>{
                             <!-- <Button severity="success" @click="editModal(data,'viewModal')" rounded class="mr-1" icon="pi pi-eye"></Button> -->
                             <Button severity="warning" @click="editModal(data)" rounded class="mr-1" icon="pi pi-wrench"></Button>
                             <Button severity="danger" rounded icon="pi pi-trash"></Button>
+                            <ConfirmPopup></ConfirmPopup>
+                            <Button v-if="isAdmin" ref="popup" @click="confirmDeleteRapat($event,data)" severity="danger" rounded icon="pi pi-trash"></Button>
                         </template>
                     </Column>
                 </DataTable>

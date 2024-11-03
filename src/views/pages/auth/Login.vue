@@ -28,7 +28,6 @@ const login_dws=(token)=>{
     loading.value=true
     axios({url,method,data})
     .then((response)=>{
-        console.log(response)
         Swal.fire({
             title: 'Berhasil',
             html: `
